@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Puzzle Game</title>
+    <style>
+        #puzzle-board {
+            width: 600px;
+            height: 600px;
+            position: relative;
+            border: 2px solid black;
+        }
+
+        .puzzle-piece {
+            width: calc(600px / ${puzzle.columns});
+            height: calc(600px / ${puzzle.rows});
+            position: absolute;
+            border: 1px solid black;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+<h1>Welcome to the Puzzle Game!</h1>
+<form th:action="@{/puzzle/upload}" method="post" enctype="multipart/form-data">
+    <input type="file" name="image" accept="image/*">
+    <button type="submit">Upload</button>
+</form>
+
+<div id="puzzle-board">
+    <div th:each="piece : ${puzzle.pieces}">
+        <div class="puzzle-piece draggable"
+             th:style="'background-image: url(\'' + ${piece.imagePath} + '\'); ' + 'left: ' + (${piece.currentX}) + 'px; ' + 'top: ' + (${piece.currentY}) + 'px;'">
+        </div>
+    </div>
+</div>
+
+<form th:action="@{/puzzle}" method="post">
+    <button type="submit" name="action" value="shuffle">Shuffle</button>
+    <button type="submit" name="action" value="check-solution">Check Solution</button>
+</form>
+
+<div th:if="${message}">
+    <p th:text="${message}"></p>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".draggable").draggable({
+            containment: "#puzzle-board",
+            snap: true,
+            snapTolerance: 10
+        });
+    });
+</script>
+
+</body>
+</html>
